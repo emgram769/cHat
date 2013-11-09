@@ -42,6 +42,8 @@ struct sockaddr_in serv_addr;
 int vidsockfd = 0,m = 0;
 struct sockaddr_in video_serv_addr;
 
+char *ip_address = "127.0.0.1";
+
 pthread_mutex_t data_lock;
 
 typedef struct _chat_buffer {
@@ -80,7 +82,7 @@ void initialize_video(){
 
     video_serv_addr.sin_family = AF_INET;
     video_serv_addr.sin_port = htons(5555);
-    video_serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    video_serv_addr.sin_addr.s_addr = inet_addr(ip_address);
 
     if(connect(vidsockfd, (struct sockaddr *)&video_serv_addr,
     sizeof(video_serv_addr))<0)
@@ -283,7 +285,7 @@ int main(int argc, char *argv[])
     
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(1337);
-    serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    serv_addr.sin_addr.s_addr = inet_addr(ip_address);
     
     if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr))<0)
     {
@@ -359,6 +361,9 @@ int main(int argc, char *argv[])
                 break;
             case 'r':
                 chat_room = optarg; //buffer overflow!
+                break;
+            case 's':
+                ip_address = optarg; //buffer overflow!
                 break;
             case 'v':
                 initialize_video();
