@@ -113,8 +113,6 @@ void print_image(IplImage *img){
     }
     write(vidsockfd, videoBuffOut, sizeof(videoBuffOut));
     
-        
-    draw_screen();
 }
 
 void video_feed(){
@@ -143,7 +141,7 @@ void video_feed(){
         
         struct timespec tim, tim2;
         tim.tv_sec  = 0;
-        tim.tv_nsec = 40000000L; // 1/20th of a second
+        tim.tv_nsec = 100000000L; // 1/20th of a second
         
         nanosleep(&tim,&tim2);
     }
@@ -211,16 +209,19 @@ void draw_screen(){
             //mvwprintw(video_window, i, 0, videoBuffOut);
             for(j=0;j<VIDEO_WIDTH;j++){
                 move(i,j);
-                addch(videoBuffIn[i*VIDEO_WIDTH+j]); // FIX ME
+                char c = videoBuffIn[i*VIDEO_WIDTH+j];
+                //" .:-=+*#%%@#"
+                addch(c); // FIX ME
             }
         }
     }
     
     mvwprintw(type_window, 1, 0, text_buf->text);
-    
-    wrefresh(main_window);
-    wrefresh(video_window);
-    wrefresh(type_window);
+    wnoutrefresh(main_window);
+    wnoutrefresh(video_window);
+    wnoutrefresh(type_window);
+
+    doupdate();
 }
 
 void read_loop(){
