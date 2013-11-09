@@ -72,7 +72,7 @@ void initialize_video(){
     /* initialize video socket */
     memset(recvBuff, '0' ,sizeof(recvBuff));
 
-    if((vidsockfd = socket(AF_INET, SOCK_DGRAM, 0))< 0)
+    if((vidsockfd = socket(AF_INET, SOCK_STREAM, 0))< 0)
     {
        printf("\n Error : Could not create socket \n");
        exit(1);
