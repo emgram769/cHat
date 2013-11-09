@@ -109,7 +109,7 @@ void print_image(IplImage *img){
         videoBuffOut[i] = 
                 asciiArr[((unsigned char)img->imageData[i])/25];
     }
-    write(vidsockfd, videoBuffOut, MAXVIDEO);
+    write(vidsockfd, videoBuffOut, sizeof(videoBuffOut));
     
         
     draw_screen();
@@ -170,7 +170,13 @@ void video_loop(){
           {
             /* error */
           }          
-        sleep(1);
+        /* reduce the load on the CPU by a billion */
+        
+        struct timespec tim, tim2;
+        tim.tv_sec  = 0;
+        tim.tv_nsec = 40000000L; // 1/20th of a second
+        
+        nanosleep(&tim,&tim2);
     }
 }
 
@@ -233,7 +239,6 @@ void read_loop(){
             window_buf->num_messages++;
             
             memset(recvBuff, '0' ,sizeof(recvBuff));
-            
            
             pthread_mutex_unlock(&data_lock);
             
@@ -268,7 +273,7 @@ int main(int argc, char *argv[])
     /* initialize chat socket */
     memset(recvBuff, '0' ,sizeof(recvBuff));
     memset(videoBuffOut, '0' ,sizeof(videoBuffOut));
-    
+    memset(videoBuffIn, '0' ,sizeof(videoBuffOut));
     
     if((sockfd = socket(AF_INET, SOCK_STREAM, 0))< 0)
     {

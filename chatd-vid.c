@@ -9,7 +9,9 @@
 #include <netdb.h>
 
 #define PORT "5555"   // port we're listening on
-#define MAXVIDEO 10000
+#define VIDEO_HEIGHT    40
+#define VIDEO_WIDTH     100
+#define MAXVIDEO    VIDEO_HEIGHT*VIDEO_WIDTH
 
 void *get_in_addr(struct sockaddr *sa)
 {
