@@ -35,7 +35,8 @@ CvCapture* cv_cap;
 /* initializing socket shit */
 int sockfd = 0,n = 0;
 char recvBuff[MAXLINE];
-char videoBuff[MAXVIDEO+VIDEO_HEIGHT];
+char videoBuffOut[MAXVIDEO];
+char videoBuffIn[MAXVIDEO];
 
 struct sockaddr_in serv_addr;
 int vidsockfd = 0,m = 0;
@@ -105,9 +106,12 @@ void print_image(IplImage *img){
 	char *asciiArr = " .:-=+*#%%@#";
     for(i=0;i<(img->height)*(img->width);i++)
     { 
-        videoBuff[i] = 
+        videoBuffOut[i] = 
                 asciiArr[((unsigned char)img->imageData[i])/25];
     }
+    write(vidsockfd, videoBuffOut, MAXVIDEO);
+    
+        
     draw_screen();
 }
 
@@ -120,7 +124,7 @@ void video_feed(){
 	IplImage* resize_img = cvCreateImage(cvSize(VIDEO_WIDTH,VIDEO_HEIGHT),8,3);
 	IplImage* gray_img = cvCreateImage(cvSize(VIDEO_WIDTH,VIDEO_HEIGHT),8,1);
 	
-    cvNamedWindow("Video",0); // create window
+    //cvNamedWindow("Video",0); // create window
 
     for(;;) {
         color_img = cvQueryFrame(cv_cap); // get frame
@@ -131,7 +135,7 @@ void video_feed(){
             // printf("%d\n",(color_img->imageData)[0]);
 						// printf("%d\n", color_img->nChannels);
             print_image(gray_img);
-            cvShowImage("Video", gray_img); // show frame
+            //cvShowImage("Video", gray_img); // show frame
         }
         /* reduce the load on the CPU by a billion */
         
@@ -144,17 +148,17 @@ void video_feed(){
     cvReleaseImage(&color_img);
     cvReleaseImage(&gray_img);
     cvReleaseCapture(&cv_cap);
-    cvDestroyWindow("Video");
+    //cvDestroyWindow("Video");
 }
 
 void video_loop(){
     while(1){
         //printf("\a");
-        while((m = read(vidsockfd, videoBuff, sizeof(videoBuff)-1)) > 0)
+        while((m = read(vidsockfd, videoBuffIn, sizeof(videoBuffIn)-1)) > 0)
           {
-            videoBuff[m] = 0;
+            //videoBuffIn[] = 0;
             
-            memset(videoBuff, '0' ,sizeof(videoBuff));
+            //memset(videoBuffOut, '0' ,sizeof(videoBuffOut));
             
             draw_screen();
             
@@ -181,7 +185,6 @@ void submit_text(){
 }
 
 void draw_screen(){
-
     clear();
 
     /* no video? :( */
@@ -196,11 +199,11 @@ void draw_screen(){
     if(video_on){
         //mvwprintw(video_window, 0, 0,"VIDEO HERE");
         for(i=0;i<VIDEO_HEIGHT;i++){
-            //memcpy(widthBuffer,videoBuff+i*VIDEO_WIDTH,VIDEO_WIDTH);
-            //mvwprintw(video_window, i, 0, videoBuff);
+            //memcpy(widthBuffer,videoBuffOut+i*VIDEO_WIDTH,VIDEO_WIDTH);
+            //mvwprintw(video_window, i, 0, videoBuffOut);
             for(j=0;j<VIDEO_WIDTH;j++){
                 move(i,j);
-                addch(videoBuff[i*VIDEO_WIDTH+j]); // FIX ME
+                addch(videoBuffIn[i*VIDEO_WIDTH+j]); // FIX ME
             }
         }
     }
@@ -257,14 +260,14 @@ int main(int argc, char *argv[])
     chat_room = "none";
     int opt;
     video_on = 0;
-    //videoBuff = malloc(MAXVIDEO*sizeof(char));
+    //videoBuffOut = malloc(MAXVIDEO*sizeof(char));
     cv_cap = cvCaptureFromCAM(CV_CAP_ANY);
     
     pthread_mutex_init (&data_lock, NULL);
 
     /* initialize chat socket */
     memset(recvBuff, '0' ,sizeof(recvBuff));
-    memset(videoBuff, '0' ,sizeof(videoBuff));
+    memset(videoBuffOut, '0' ,sizeof(videoBuffOut));
     
     
     if((sockfd = socket(AF_INET, SOCK_STREAM, 0))< 0)
