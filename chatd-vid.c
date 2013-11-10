@@ -33,7 +33,7 @@ int main(void)
     struct sockaddr_storage remoteaddr; // client address
     socklen_t addrlen;
 
-    char buf[MAXVIDEO];    // buffer for client data
+    char buf[MAXVIDEO+1];    // buffer for client data
     int nbytes;
 
 	char remoteIP[INET6_ADDRSTRLEN];

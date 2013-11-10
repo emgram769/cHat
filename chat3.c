@@ -156,9 +156,7 @@ int initialize_audio_send(void)
 	int fd, i, slen=sizeof(remaddr);
 	char buf[BUFLEN];	/* message buffer */
 	int recvlen;		/* # bytes in acknowledgement message */
-	char *server = "127.0.0.1";	/* change this to use a different server */
-	
-	//char *server = "172.26.11.140";	/* change this to use a different server */
+	char *server = "172.26.11.140";	/* change this to use a different server */
 
 	/* create a socket */
 
@@ -347,8 +345,6 @@ struct sockaddr_in video_serv_addr;
 char *ip_address = "127.0.0.1";
 
 pthread_mutex_t data_lock;
-pthread_mutex_t video_lock;
-
 
 typedef struct _chat_buffer {
     int length;
@@ -458,12 +454,8 @@ void video_feed(){
 void video_loop(){
     while(1){
         //printf("\a");
-        //pthread_mutex_lock(&video_lock);
-        
-        while((m = read(vidsockfd, videoBuffIn, sizeof(videoBuffIn)-1)) > 0)
+        while((m = read(vidsockfd, videoBuffIn, sizeof(videoBuffIn)-1)) > 1)
           {
-             //if (m==1)
-              
             //videoBuffIn[] = 0;
             
             //memset(videoBuffOut, '0' ,sizeof(videoBuffOut));
@@ -472,10 +464,12 @@ void video_loop(){
             //if(fputs(recvBuff, stdout) == EOF)
             
           }
-          
-        //pthread_mutex_unlock(&video_lock);        
-        draw_screen();
-          
+          draw_screen();
+
+        if( n < 0)
+          {
+            /* error */
+          }          
         /* reduce the load on the CPU by a billion */
         
         struct timespec tim, tim2;
@@ -499,8 +493,6 @@ void submit_text(){
 
 void draw_screen(){
     clear();
-    pthread_mutex_lock(&video_lock);
-    //pthread_mutex_lock(&data_lock);
 
     /* no video? :( */
     int i,j;
@@ -509,10 +501,8 @@ void draw_screen(){
     }
     touchwin(main_window);
     
-    
     /* if video draw that! */
-    //char widthBuffer[VIDEO_WIDTH];
-     
+    //char widthBuffer[VIDEO_WIDTH]; 
     if(video_on){
         //mvwprintw(video_window, 0, 0,"VIDEO HERE");
         for(i=0;i<VIDEO_HEIGHT;i++){
@@ -535,19 +525,15 @@ void draw_screen(){
     wnoutrefresh(type_window);
 
     doupdate();
-    pthread_mutex_unlock(&video_lock);
-    
-    //pthread_mutex_lock(&data_lock);
-    
 }
 
 void read_loop(){
     while(1){
         //printf("\a");
-        while((n = read(sockfd, recvBuff, sizeof(recvBuff)-1)) > 1)
+        while((n = read(sockfd, recvBuff, sizeof(recvBuff)-1)) > 0)
           {
             recvBuff[n] = 0;
-            //pthread_mutex_lock(&data_lock);
+            pthread_mutex_lock(&data_lock);
             
             chat_buffer *rec_buf=calloc(1,sizeof(chat_buffer));
             int j;
@@ -560,9 +546,9 @@ void read_loop(){
             
             memset(recvBuff, '0' ,sizeof(recvBuff));
            
-            //pthread_mutex_unlock(&data_lock);
+            pthread_mutex_unlock(&data_lock);
             
-            //draw_screen();
+            draw_screen();
             
             //if(fputs(recvBuff, stdout) == EOF)
             
@@ -589,7 +575,6 @@ int main(int argc, char *argv[])
     cv_cap = cvCaptureFromCAM(CV_CAP_ANY);
     
     pthread_mutex_init (&data_lock, NULL);
-    pthread_mutex_init (&video_lock, NULL);
 
     /* initialize chat socket */
     memset(recvBuff, '0' ,sizeof(recvBuff));
@@ -600,12 +585,12 @@ int main(int argc, char *argv[])
     int val123;
     val123 = pthread_create(&recv_audio_thread, NULL,
         (void*)initialize_audio_recv, NULL);
-    /*
+    
     pthread_t send_audio_thread;
     int val124;
     val124 = pthread_create(&send_audio_thread, NULL,
         (void*)initialize_audio_send, NULL);
-    */
+    
     if((sockfd = socket(AF_INET, SOCK_STREAM, 0))< 0)
     {
         printf("\n Error : Could not create socket \n");
@@ -711,7 +696,7 @@ int main(int argc, char *argv[])
             submit_text();
             text_buf->length=0;
             memset(text_buf->text, 0, sizeof(text_buf->text));
-            //draw_screen();
+            draw_screen();
             
         } else if (c==127)
         {
@@ -719,7 +704,7 @@ int main(int argc, char *argv[])
                 text_buf->text[text_buf->length] = '\0';
                 text_buf->length--;
             }
-            //draw_screen();
+            draw_screen();
         }
         else if (c>0)
         {
@@ -732,16 +717,15 @@ int main(int argc, char *argv[])
             
             text_buf->text[text_buf->length] = (char)c;
             text_buf->length++;
-            //draw_screen();
+            draw_screen();
             
         }
         
         /* reduce the load on the CPU by a billion */
-        draw_screen();
         
         struct timespec tim, tim2;
         tim.tv_sec  = 0;
-        tim.tv_nsec = 20000000L; // 1/100th of a second
+        tim.tv_nsec = 10000000L; // 1/100th of a second
         
         nanosleep(&tim,&tim2);
     }
