@@ -5,9 +5,9 @@ This is a simple chat client with video and audio chat options.
 
 It is currently early alpha and requires two dynamic libraries to be installed:
 - OpenCV --> http://opencv.org
-- portaudio --> http://www.portaudio.com
+- PortAudio --> http://www.portaudio.com
 
-The whole thing is written in C and should ideally compile on any system with those libraries installed.
+The whole thing is written in C and should compile on any system with those libraries installed.
 
 
 Compile chat client (chat) with 
