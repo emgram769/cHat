@@ -16,7 +16,7 @@ Compile chat client (chat) with
 Compile server (chatd) with
 `gcc chatd.c -o chatd`
 
-Compile video server (chatd-video) with
+Compile video server (chatd-vid) with
 `gcc chatd-video.c -o chatd-vid`
 
 
