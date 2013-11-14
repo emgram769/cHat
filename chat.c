@@ -378,8 +378,7 @@ void initialize_video(){
     /* initialize video socket */
     memset(recvBuff, '0' ,sizeof(recvBuff));
 
-    if((vidsockfd = socket(AF_INET, SOCK_STREAM, 0))< 0)
-    {
+    if((vidsockfd = socket(AF_INET, SOCK_STREAM, 0))< 0) {
        printf("\n Error : Could not create socket \n");
        exit(1);
     }
@@ -389,8 +388,7 @@ void initialize_video(){
     video_serv_addr.sin_addr.s_addr = inet_addr(ip_address);
 
     if(connect(vidsockfd, (struct sockaddr *)&video_serv_addr,
-    sizeof(video_serv_addr))<0)
-    {
+    sizeof(video_serv_addr))<0) {
        printf("\n Error : Connect Failed \n");
        exit(1);
     }
@@ -404,6 +402,7 @@ void initialize_video(){
     
 }
 
+//Convert image to ascii, add to buffer
 void print_image(IplImage *img){
     int i,j;
     int height = img->height;
@@ -415,8 +414,7 @@ void print_image(IplImage *img){
         videoBuffOut[i] = 
                 asciiArr[((unsigned char)img->imageData[i])/25];
     }
-    write(vidsockfd, videoBuffOut, sizeof(videoBuffOut));
-    
+    write(vidsockfd, videoBuffOut, sizeof(videoBuffOut)); 
 }
 
 void video_feed(){
@@ -430,7 +428,7 @@ void video_feed(){
 	
     //cvNamedWindow("Video",0); // create window
 
-    for(;;) {
+    while(1) {
         color_img = cvQueryFrame(cv_cap); // get frame
 				// gray_img = cvCvtColor(cv_cap, gray, CV_BGR2GRAY);
         if(color_img != 0){
@@ -487,7 +485,6 @@ void video_loop(){
 }
 
 void submit_text(){
-    
     write(sockfd, text_buf->text, text_buf->length);
     window_buf->chats[window_buf->num_messages]=calloc(1,sizeof(chat_buffer));
     memcpy(window_buf->chats[window_buf->num_messages]->text,
@@ -544,8 +541,7 @@ void draw_screen(){
 void read_loop(){
     while(1){
         //printf("\a");
-        while((n = read(sockfd, recvBuff, sizeof(recvBuff)-1)) > 1)
-          {
+        while((n = read(sockfd, recvBuff, sizeof(recvBuff)-1)) > 1) {
             recvBuff[n] = 0;
             //pthread_mutex_lock(&data_lock);
             
@@ -568,16 +564,14 @@ void read_loop(){
             
           }
 
-        if( n < 0)
-          {
+        if( n < 0) {
             /* error */
           }          
         sleep(1);
     }
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     /* initialize the chat client with arguments */
     int port;
     char *user_name;
@@ -616,8 +610,7 @@ int main(int argc, char *argv[])
     serv_addr.sin_port = htons(1337);
     serv_addr.sin_addr.s_addr = inet_addr(ip_address);
     
-    if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr))<0)
-    {
+    if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr))<0) {
         printf("\n Error : Connect Failed \n");
         return 1;
     }
@@ -656,8 +649,7 @@ int main(int argc, char *argv[])
     
     type_window = subwin(main_window, 2, COLS, LINES-2 ,0);
 
-    if (has_colors())
-    {
+    if (has_colors()) {
         start_color();
 
         /*
@@ -676,8 +668,7 @@ int main(int argc, char *argv[])
     }
     //set color
     
-    while(-1 != (opt = getopt(argc, argv, "hvp:u:s:t:")))
-    {
+    while(-1 != (opt = getopt(argc, argv, "hvp:u:s:t:"))){
         switch(opt){
             case 'h':
                 printf("sorry no instructions yet :(\n");
@@ -703,37 +694,30 @@ int main(int argc, char *argv[])
     }
 
     
-    for (;;)
-    {
+    while(1){
         int c = getch();     /* refresh, accept single keystroke of input */
-        if (c==13)
-        {
+        if (c==13){
             submit_text();
             text_buf->length=0;
             memset(text_buf->text, 0, sizeof(text_buf->text));
             //draw_screen();
             
-        } else if (c==127)
-        {
+        } else if (c==127){
             if(text_buf->length>=0){
                 text_buf->text[text_buf->length] = '\0';
                 text_buf->length--;
             }
             //draw_screen();
         }
-        else if (c>0)
-        {
-            if(text_buf->length>=MAXLINE)
-            {
+        else if (c>0){
+            if(text_buf->length>=MAXLINE) {
                 submit_text();
                 text_buf->length=0;
                 memset(text_buf->text, 0, sizeof(text_buf->text));
             }
-            
             text_buf->text[text_buf->length] = (char)c;
             text_buf->length++;
-            //draw_screen();
-            
+            //draw_screen();           
         }
         
         /* reduce the load on the CPU by a billion */
@@ -749,8 +733,7 @@ int main(int argc, char *argv[])
     finish(0);               /* we're done */
 }
 
-static void finish(int sig)
-{
+static void finish(int sig) {
     endwin();
 
     /* do your non-curses wrapup here */
