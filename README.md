@@ -18,7 +18,7 @@ Compile server (chatd) with
 `gcc chatd.c -o chatd`
 
 Compile video server (chatd-vid) with
-`gcc chatd-video.c -o chatd-vid`
+`gcc chatd-vid.c -o chatd-vid`
 
 
 ====
