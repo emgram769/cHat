@@ -1,5 +1,6 @@
 cHat
 ====
+by Bram, Stef and Michael
 
 This is a simple chat client with video and audio chat options.
 
