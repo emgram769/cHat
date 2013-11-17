@@ -22,7 +22,6 @@
 #define VIDEO_WIDTH     100
 #define MAXVIDEO    VIDEO_HEIGHT*VIDEO_WIDTH
 
-//Sjdlfkjas;lkj
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
