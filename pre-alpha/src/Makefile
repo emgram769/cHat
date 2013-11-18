@@ -5,7 +5,7 @@
 CC=gcc
 CFLAGS= -Wall -Wextra -Werror -g -c -O2 -std=gnu99
 LDFLAGS= -lncurses
-SOURCES= cHat.c display.c
+SOURCES= cHat.c ui.c
 OBJECTS=$(SOURCES:.c=.o)
 EXECUTABLE=cHat
 
