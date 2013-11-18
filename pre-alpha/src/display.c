@@ -60,15 +60,15 @@ void quit_dialogue(void) {
     height = 6;
     width = 20;
 
-
+    /* create a local window and display it. */
     WINDOW *quit_window;
     quit_window = subwin(main_window, height, width,
                     (LINES-height)/2, (COLS-width)/2);
-    mvwprintw(quit_window, 1, 1, /* for border. */ 
+    mvwprintw(quit_window, 1, 1, /* padding for border. */ 
                     "are you sure\n you want to quit?");
     mvwprintw(quit_window, height-2, 1,
                     "press q");
-    box(quit_window, 0, 0);
+    box(quit_window, 0, 0); /* adds a border. */
     
     wrefresh(main_window);
 }

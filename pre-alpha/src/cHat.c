@@ -6,18 +6,19 @@
 #include <stdlib.h> /* atoi */
 #include <getopt.h>
 #include <curses.h>
+#include <pthread.h>
 
 #include "display.h"
+#include "network.h"
 
 #define DEFAULT_PORT 1337
 
 /* global buffers. */
 
-typedef struct _chat {
+typedef struct _chat_buffer {
     unsigned int length;
     char *text;
-} chat;
-
+} chat_buffer;
 
 /* initialize_video:
  * Initializes the video portion of the chat client.
@@ -39,13 +40,14 @@ void print_usage(void) {
  * run all the necessary routines.
  */
 int main(int argc, char *argv[]) {
-    int port;
-    char *ip_address;
+
+
+    struct network_data *settings = malloc(sizeof(struct network_data));
     char opt;
 
     /* Default port. */
-    port = DEFAULT_PORT;
-    ip_address = NULL;
+    settings->port = DEFAULT_PORT;
+    settings->ip_address = NULL;
 
     while(-1 != (opt = getopt(argc, argv, "hvp:i:"))){
         switch(opt){
@@ -53,10 +55,10 @@ int main(int argc, char *argv[]) {
                 print_usage();
                 return 0;
             case 'p':
-                port = atoi(optarg);
+                settings->port = atoi(optarg);
                 break;
             case 'i':
-                ip_address = optarg;
+                settings->ip_address = optarg;
                 break;
             case 'v':
                 initialize_video();
@@ -66,10 +68,15 @@ int main(int argc, char *argv[]) {
                 break;
         }
     }
-
-    if (ip_address)
-        printf("ip_address: %s\n", ip_address);
-    printf("port: %d\n", port);
+ 
+    /* spawn network thread. */
+    pthread_t network_thread;
+    if((pthread_create(&network_thread, NULL,
+        (void *)initialize_network, (void *)settings))==-1)
+        printf("error initializing network thread.\n");
+    
+    if((pthread_detach(network_thread))==-1)
+        printf("error detatching thread.\n");
 
     initialize_display();
 
