@@ -2,9 +2,10 @@
  * The main file for the cHat chat client.
  */
 
-#include <stdio.h>  /* printf */
-#include <stdlib.h>  /* atoi */
+#include <stdio.h> /* printf */
+#include <stdlib.h> /* atoi */
 #include <getopt.h>
+#include <curses.h>
 
 #include "display.h"
 
@@ -14,15 +15,14 @@
  * Initializes the video portion of the chat client.
  */
 void initialize_video(void) {
-    printf("Haha Not implemented\n");
+    printf("Not implemented\n");
     return;
 }
 
 /* print_usage:
- * Prints the usage of cHat.
- */
+ * Prints the usage of cHat. */
 void print_usage(void) {
-    printf("Usage:  cHat ....... to be written later by Bram.\n");
+    printf("Usage:  cHat -i <ip> [-p <port> [-v [-h]]]\n");
     return;
 }
 
@@ -65,13 +65,19 @@ int main(int argc, char *argv[]) {
 
     initialize_display();
 
+    while(1){ /* ...and 100% CPU usage */
+        int c = getch();  /* refresh, accept single keystroke of input. */
+        if (c == 13){
+            /* enter key */
+            draw_xy(COLS / 2, LINES - 1, 's', 1);
+        } else if (c == 127){
+            /* backspace */
+        } else if (c > 0) {
+            /* any other key */
+        }
+    }
+
     cleanup_display();
     return 0;
 }
-
-
-
-
-
-
 

@@ -33,6 +33,24 @@ void display(void) {
     return;
 }
 
+/* draw_xy:
+ * draws a char to the window passed in at point (x,y).
+ * range is (0,0) -> (COLS-1,LINES-1).
+ * if the last parameter is 1, do a screen update on call.
+ */
+void draw_xy(int x, int y, char c, int update){
+    clear();
+    
+    move(y,x);
+    addch(c);
+    
+    touchwin(main_window);
+    wnoutrefresh(main_window);
+    
+    if(update)
+        doupdate();
+}
+
 /* cleanup_display:
  * Cleans up the display.  Should be called before exit.
  */
