@@ -55,7 +55,7 @@ void initialize_network(void *network_settings){
                 (struct sockaddr *) &clientaddr, &clientlen)) < 0)
             error_handler("listener accept error");
 
-        /* start up a connection to our friend's ip */
+        /* start up a connection to our friend's ip. */
         struct sockaddr_in forwardaddr;
         int forwardfd;
         socklen_t forwardlen;
@@ -72,15 +72,15 @@ void initialize_network(void *network_settings){
                 (struct sockaddr *) &forwardaddr, forwardlen) < 0)
             error_handler("forward connect error");
 
-        /* initialize recieve buffer */
+        /* initialize recieve buffer. */
         memset(buf,0,BUFSIZE);
-        if((n = read(connfd, buf, BUFSIZE)) < 0) /* read bufsize into buf */
+        if((n = read(connfd, buf, BUFSIZE)) < 0) /* read bufsize into buf. */
             error_handler("connection read error");
 
-        if((n = write(forwardfd, buf, BUFSIZE)) < 0) /* write buf into forwarded peer */
+        if((n = write(forwardfd, buf, BUFSIZE)) < 0) /* write buf into forwarded peer. */
             error_handler("forward write error");
 
-        /* wrap up connection */
+        /* wrap up connection. */
         close(forwardfd);
         close(connfd);
     }
