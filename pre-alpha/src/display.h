@@ -10,6 +10,8 @@ void display(void);
 
 void draw_xy(int x, int y, char c, int update);
 
+void quit_dialogue(void);
+
 void cleanup_display(void);
 
 #endif /* _CHAT_DISPLAY_H_ */

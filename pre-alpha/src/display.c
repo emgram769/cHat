@@ -51,6 +51,28 @@ void draw_xy(int x, int y, char c, int update){
         doupdate();
 }
 
+/* quit_dialogue:
+ * Prompts the user to quit the program.
+ */
+void quit_dialogue(void) {
+    clear();
+    int height, width;
+    height = 6;
+    width = 20;
+
+
+    WINDOW *quit_window;
+    quit_window = subwin(main_window, height, width,
+                    (LINES-height)/2, (COLS-width)/2);
+    mvwprintw(quit_window, 1, 1, /* for border. */ 
+                    "are you sure\n you want to quit?");
+    mvwprintw(quit_window, height-2, 1,
+                    "press q");
+    box(quit_window, 0, 0);
+    
+    wrefresh(main_window);
+}
+
 /* cleanup_display:
  * Cleans up the display.  Should be called before exit.
  */

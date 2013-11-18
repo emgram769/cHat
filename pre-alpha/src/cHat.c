@@ -11,6 +11,14 @@
 
 #define DEFAULT_PORT 1337
 
+/* global buffers. */
+
+typedef struct _chat {
+    unsigned int length;
+    char *text;
+} chat;
+
+
 /* initialize_video:
  * Initializes the video portion of the chat client.
  */
@@ -72,6 +80,9 @@ int main(int argc, char *argv[]) {
             draw_xy(COLS / 2, LINES - 1, 's', 1);
         } else if (c == 127){
             /* backspace */
+        } else if (c == 27){
+            /* esc key */
+            quit_dialogue();
         } else if (c > 0) {
             /* any other key */
         }
