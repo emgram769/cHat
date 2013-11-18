@@ -8,15 +8,16 @@
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <stdlib.h> /* free */
+#include <unistd.h>
 
 /* initialize_network:
- * This initializes all network systems.  It called to start the network
+ * This initializes all network systems.  It's called to start the network
  * thread.
  */
 void initialize_network(void *network_settings){
     int port = ((struct network_data *)network_settings)->port;
     (void) port; /* for now */
-    draw_xy(10,10,'c',1);
+    
     free(network_settings);
 }
 

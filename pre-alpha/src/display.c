@@ -72,6 +72,14 @@ void quit_dialogue(void) {
     box(quit_window, 0, 0); /* adds a border. */
     
     wrefresh(main_window);
+    
+    getch(); /* weird that I need this here */
+    int c = getch();
+    if(c=='q'||c=='Q'){
+        cleanup_display();
+        exit(0);
+    }
+
 }
 
 /* cleanup_display:
