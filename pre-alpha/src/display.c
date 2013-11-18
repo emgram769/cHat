@@ -1,6 +1,7 @@
 /* display.c
  * The file containing all the display logic.
  */
+#include "display.h"
 
 #include <stdlib.h>  /* exit */ 
 #include <curses.h>
