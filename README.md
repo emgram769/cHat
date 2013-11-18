@@ -10,7 +10,7 @@ It is currently early alpha and requires two dynamic libraries to be installed:
 
 The whole thing is written in C and should compile on any system with those libraries installed.
 
-
+In /hackathon:
 Compile chat client (chat) with 
 ``gcc chat.c -o chat -lncurses -portaudio `pkg-config --cflags --libs opencv` ``
 
@@ -21,7 +21,6 @@ Compile video server (chatd-vid) with
 `gcc chatd-vid.c -o chatd-vid`
 
 
-====
 Plans
 ====
 
