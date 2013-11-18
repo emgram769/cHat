@@ -2,18 +2,23 @@
  * The main file for the cHat chat client.
  */
 
-#include <stdio.h> /* printf */
-#include <stdlib.h> /* atoi */
+#include <stdio.h>  /* printf */
+#include <stdlib.h>  /* atoi */
 #include <getopt.h>
-#include <curses.h>
 
+#include "display.h"
+
+/* initialize_video:
+ * Initializes the video portion of the chat client.
+ */
 void initialize_video(void) {
     printf("Haha Not implemented\n");
     return;
 }
 
 /* print_usage:
- * Prints the usage of cHat. */
+ * Prints the usage of cHat.
+ */
 void print_usage(void) {
     printf("Usage:  cHat ....... to be written later by Bram.\n");
     return;
@@ -58,20 +63,9 @@ int main(int argc, char *argv[]) {
         printf("ip_address: %s\n", ip_address);
     printf("port: %d\n", port);
 
-    WINDOW *main_window;
-    if ((main_window = initscr()) == NULL){
-        fprintf(stderr, "ncurses failed.\n");
-        exit(EXIT_FAILURE);
-    }
+    initialize_display();
 
-    keypad(main_window, TRUE);  /* keyboard mapping. */
-    nodelay(main_window, TRUE);  /* refresh. */
-    (void) nonl();  /* tell curses not to do NL->CR/NL on output. */
-    (void) cbreak();  /* don't wait for line break. */
-    (void) noecho();  /* don't print getch to stdout. */
-
-    
-
+    cleanup_display();
     return 0;
 }
 
