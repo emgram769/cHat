@@ -20,6 +20,8 @@
 void initialize_network(void *network_settings){
     int port = ((struct network_data *)network_settings)->port;
     char *ip_address = ((struct network_data *)network_settings)->ip_address;
+    if(!ip_address)
+        error_handler("no ip address");
     int listenfd, connfd; /* listen for new connections and current connection. */
     socklen_t clientlen; /* for accept */
 
@@ -78,6 +80,9 @@ void initialize_network(void *network_settings){
         if((n = write(forwardfd, buf, BUFSIZE)) < 0) /* write buf into forwarded peer */
             error_handler("forward write error");
 
+        /* wrap up connection */
+        close(forwardfd);
+        close(connfd);
     }
 
     free(network_settings);
