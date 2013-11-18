@@ -10,8 +10,7 @@ It is currently early alpha and requires two dynamic libraries to be installed:
 
 The whole thing is written in C and should compile on any system with those libraries installed.
 
-In /hackathon:
-Compile chat client (chat) with 
+Compile chat client (chat) in the hackathon directory with 
 ``gcc chat.c -o chat -lncurses -portaudio `pkg-config --cflags --libs opencv` ``
 
 Compile server (chatd) with
@@ -24,7 +23,7 @@ Compile video server (chatd-vid) with
 Plans
 ====
 
-- Eliminate hardcoded IPs (it was made a hackathon, give us a break)
+- Complete rewrite (see pre-alpha)
 - Stabilize video refreshing
 - Standardize to P2P (already done in audio)
 - Write a standardized protocol for sending color data along with image data
