@@ -19,7 +19,7 @@ void initialize_display(void) {
     }
 
     keypad(main_window, TRUE);  /* keyboard mapping. */
-    nodelay(main_window, TRUE);  /* refresh. */
+    //nodelay(main_window, TRUE);  /* BAD NEWS for CPU, may want to handle this differently */
     (void) nonl();  /* tell curses not to do NL->CR/NL on output. */
     (void) cbreak();  /* don't wait for line break. */
     (void) noecho();  /* don't print getch to stdout. */
