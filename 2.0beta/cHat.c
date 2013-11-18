@@ -8,6 +8,8 @@
 
 #include "display.h"
 
+#define DEFAULT_PORT 1337
+
 /* initialize_video:
  * Initializes the video portion of the chat client.
  */
@@ -23,8 +25,6 @@ void print_usage(void) {
     printf("Usage:  cHat ....... to be written later by Bram.\n");
     return;
 }
-
-#define DEFAULT_PORT 1337
 
 /* main:
  * The main function parses command line arguments and creates new threads to
