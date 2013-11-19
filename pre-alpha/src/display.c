@@ -111,7 +111,8 @@ void cleanup_display(void) {
     /* We ignore the return value of endwin, as there is nothing we can do if
      * it does return an error.
      */
-    (void) endwin();
+    if (main_window != NULL)
+        (void) endwin();
     return;
 }
 
