@@ -17,6 +17,10 @@ void error_handler(char *err){
     exit(1);
 }
 
+void error_handler_display(char * err) {
+    popup_dialogue(err);
+}
+
 int is_valid_fd(int fd){
     return fcntl(fd, F_GETFL) != -1 || errno != EBADF;
 }

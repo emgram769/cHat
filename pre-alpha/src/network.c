@@ -33,6 +33,61 @@ int parse_buf(char *buf) {
 }
 
 
+/* wait_for_connnection:
+ * called by the initializer, this is the main function that is used
+ * after set up of the socket structs.
+ */
+void wait_for_connection(struct sockaddr_in clientaddr, struct sockaddr_in forwardaddr,
+                         int listenfd, char buf[BUFSIZE], struct network_data *network_settings) {
+
+    socklen_t clientlen = sizeof(clientaddr); /* for accept, stupid socket interface */
+    
+    int port = network_settings->port;
+    char *ip_address = network_settings->ip_address;
+
+    int connfd, forwardfd; /* initialize file descriptors */
+        
+    while(1){
+        int n;
+        /* we got a connection! */
+        if ((connfd = accept(listenfd,
+                (struct sockaddr *) &clientaddr, &clientlen)) < 0)
+            error_handler("listener accept error");
+
+        /* start up a connection to our friend's ip. */
+        socklen_t forwardlen;
+        forwardaddr.sin_family = AF_INET; /* protocol */
+        forwardaddr.sin_port = htons(port);
+        forwardaddr.sin_addr.s_addr = inet_addr(ip_address);
+        forwardlen = sizeof(forwardaddr);
+    
+        /* now to open the forwarder. */
+        if ((forwardfd = socket(AF_INET, SOCK_STREAM, 0))<0)
+            error_handler("forward socket error");
+
+        if (connect(forwardfd,
+                (struct sockaddr *) &forwardaddr, forwardlen) < 0)
+            error_handler_display("forward connect error");
+
+        /* initialize recieve buffer. */
+        memset(buf,0,BUFSIZE);
+        if ((n = read(connfd, buf, BUFSIZE)) < 0) /* read bufsize into buf. */
+            error_handler("connection read error");
+        
+        clear_display();
+        write_xy(0,0,buf,1);
+        
+        if (!parse_buf(buf))
+        if ((n = write(forwardfd, buf, BUFSIZE)) < 0) /* write buf into forwarded peer. */
+            error_handler_display("forward write error");
+
+        /* wrap up connection. */
+        close(forwardfd);
+        close(connfd);
+    }
+
+
+}
 
 /* initialize_network:
  * This initializes all network systems.  It's called to start the network
@@ -43,8 +98,7 @@ void initialize_network(void *network_settings) {
     char *ip_address = ((struct network_data *)network_settings)->ip_address;
     if (!ip_address)
         error_handler("no ip address");
-    int listenfd, connfd, forwardfd; /* socket fds. */
-    socklen_t clientlen; /* for accept */
+    int listenfd; /* socket fds. */
 
     /* to recieve and send. */
     struct sockaddr_in serveraddr;
@@ -68,46 +122,9 @@ void initialize_network(void *network_settings) {
     if (listen(listenfd, MAXUSERS) < 0) /* allow requests to queue up */ 
         error_handler("listener listen error");
 
-    clientlen = sizeof(clientaddr);
-
-    while(1){
-        int n;
-        /* we got a connection! */
-        if ((connfd = accept(listenfd,
-                (struct sockaddr *) &clientaddr, &clientlen)) < 0)
-            error_handler("listener accept error");
-
-        /* start up a connection to our friend's ip. */
-        socklen_t forwardlen;
-        forwardaddr.sin_family = AF_INET; /* protocol */
-        forwardaddr.sin_port = htons(port);
-        forwardaddr.sin_addr.s_addr = inet_addr(ip_address);
-        forwardlen = sizeof(forwardaddr);
-    
-        /* now to open the forwarder. */
-        if ((forwardfd = socket(AF_INET, SOCK_STREAM, 0))<0)
-            error_handler("forward socket error");
-
-        if (connect(forwardfd,
-                (struct sockaddr *) &forwardaddr, forwardlen) < 0)
-            error_handler("forward connect error");
-
-        /* initialize recieve buffer. */
-        memset(buf,0,BUFSIZE);
-        if ((n = read(connfd, buf, BUFSIZE)) < 0) /* read bufsize into buf. */
-            error_handler("connection read error");
-        
-        clear_display();
-        write_xy(0,0,buf,1);
-        
-        if (!parse_buf(buf))
-        if ((n = write(forwardfd, buf, BUFSIZE)) < 0) /* write buf into forwarded peer. */
-            error_handler("forward write error");
-
-        /* wrap up connection. */
-        close(forwardfd);
-        close(connfd);
-    }
+    /* wait for a new connection now that everything is set up */
+    wait_for_connection(clientaddr, forwardaddr, listenfd, buf,
+                        (struct network_data *)network_settings); 
 
     free(network_settings);
 }
