@@ -8,6 +8,8 @@ void initialize_display(void);
 
 void display(void);
 
+void clear_display(void);
+
 void write_xy(int x, int y, char* msg, int update);
 
 void draw_xy(int x, int y, char c, int update);

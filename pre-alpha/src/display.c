@@ -34,6 +34,14 @@ void display(void) {
     return;
 }
 
+/* clear_display:
+ * clears the display.
+ */
+void clear_display(void) {
+    clear();
+    return;
+}
+
 /* write_xy:
  * writes a msg to the window passed in at point (x,y)
  * if the last parameter is 1, do a screen update on call.

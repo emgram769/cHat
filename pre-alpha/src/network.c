@@ -22,12 +22,13 @@ void initialize_network(void *network_settings){
     char *ip_address = ((struct network_data *)network_settings)->ip_address;
     if(!ip_address)
         error_handler("no ip address");
-    int listenfd, connfd; /* listen for new connections and current connection. */
+    int listenfd, connfd, forwardfd; /* listen for new connections and current connection. */
     socklen_t clientlen; /* for accept */
 
     /* to recieve and send. */
     struct sockaddr_in serveraddr;
     struct sockaddr_in clientaddr;
+    struct sockaddr_in forwardaddr;
 
     char buf[BUFSIZE]; /* may want to change this. */
 
@@ -56,8 +57,6 @@ void initialize_network(void *network_settings){
             error_handler("listener accept error");
 
         /* start up a connection to our friend's ip. */
-        struct sockaddr_in forwardaddr;
-        int forwardfd;
         socklen_t forwardlen;
         forwardaddr.sin_family = AF_INET; /* protocol */
         forwardaddr.sin_port = htons(port);
@@ -76,8 +75,9 @@ void initialize_network(void *network_settings){
         memset(buf,0,BUFSIZE);
         if((n = read(connfd, buf, BUFSIZE)) < 0) /* read bufsize into buf. */
             error_handler("connection read error");
-
-        write_xy(0,10,buf,1);
+        
+        clear_display();
+        write_xy(0,0,buf,1);
 
         if((n = write(forwardfd, buf, BUFSIZE)) < 0) /* write buf into forwarded peer. */
             error_handler("forward write error");
