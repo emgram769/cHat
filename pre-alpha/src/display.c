@@ -34,13 +34,27 @@ void display(void) {
     return;
 }
 
+/* write_xy:
+ * writes a msg to the window passed in at point (x,y)
+ * if the last parameter is 1, do a screen update on call.
+ */
+void write_xy(int x, int y, char *msg, int update){
+    mvwprintw(main_window, y, x, msg);
+
+    touchwin(main_window);
+    wnoutrefresh(main_window);
+    
+    if(update)
+        doupdate();
+}
+
+
 /* draw_xy:
  * draws a char to the window passed in at point (x,y).
  * range is (0,0) -> (COLS-1,LINES-1).
  * if the last parameter is 1, do a screen update on call.
  */
 void draw_xy(int x, int y, char c, int update){
-    clear();
     
     move(y,x);
     addch(c);

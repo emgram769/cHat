@@ -77,6 +77,8 @@ void initialize_network(void *network_settings){
         if((n = read(connfd, buf, BUFSIZE)) < 0) /* read bufsize into buf. */
             error_handler("connection read error");
 
+        write_xy(0,10,buf,1);
+
         if((n = write(forwardfd, buf, BUFSIZE)) < 0) /* write buf into forwarded peer. */
             error_handler("forward write error");
 
