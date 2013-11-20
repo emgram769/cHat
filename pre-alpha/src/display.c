@@ -102,6 +102,7 @@ void quit_dialogue(void) {
         cleanup_display();
         exit(0);
     } else {
+        delwin(quit_window);
         display();
     }
 
@@ -117,22 +118,24 @@ void popup_dialogue(char *msg) {
     width = 20;
 
     /* create a local window and display it. */
-    WINDOW *quit_window;
-    quit_window = subwin(main_window, height, width,
+    WINDOW *popup_window;
+    popup_window = subwin(main_window, height, width,
                     (LINES-height)/2, (COLS-width)/2);
-    mvwprintw(quit_window, 1, 1, /* padding for border. */ 
+    mvwprintw(popup_window, 1, 1, /* padding for border. */ 
                     msg);
-    mvwprintw(quit_window, height-2, 1,
+    mvwprintw(popup_window, height-2, 1,
                     "(esc to close)");
-    box(quit_window, 0, 0); /* adds a border. */
+    box(popup_window, 0, 0); /* adds a border. */
     
     wrefresh(main_window);
     
     getch(); /* weird that I need this here */
     int c = getch();
     if(c==27){
+        delwin(popup_window);
         display();
     } else {
+        delwin(popup_window);
         display();
     }
 
