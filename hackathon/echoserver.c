@@ -127,7 +127,7 @@ int main(int argc, char **argv) {
     
 
     /* read: read input string from the client */
-    bzero(buf, BUFSIZE);
+     bzero(buf, BUFSIZE);
     n = read(connfd, buf, BUFSIZE);
     if (n < 0) 
       error("ERROR reading from socket");
