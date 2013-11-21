@@ -11,31 +11,12 @@
 
 #include "display.h"
 #include "network.h"
+#include "buffers.h"
 
 #define DEFAULT_PORT 1337
 
-/* global buffers. */
-
-typedef struct _line_buffer {
-    unsigned int length;
-    unsigned int max_length;
-    char *text;
-} line_buffer;
-
-typedef struct _line_buffer_node {
-    line_buffer line;
-    struct _line_buffer_node *prev;
-} line_buffer_node;
-
-typedef struct _line_buffer_list {
-    line_buffer_node *head;
-    line_buffer_node *curr;
-    line_buffer_node *tail;
-} line_buffer_list;
-
 line_buffer curr_line;
 line_buffer_list *line_list;
-
 
 /* initialize_buffers:
  * Initializes the text buffers used by the client.
@@ -45,6 +26,7 @@ void initialize_buffers(void) {
     curr_line.length = 0;
     curr_line.max_length = 0;
 }
+
 /* initialize_video:
  * Initializes the video portion of the chat client.
  */
@@ -86,8 +68,7 @@ void process_input(char c) {
     }
 
     curr_line.length++;
-
-    write_xy(0,LINES-1,curr_line.text,1);
+    display();
     return;
 };
 

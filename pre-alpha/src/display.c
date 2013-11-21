@@ -2,12 +2,17 @@
  * The file containing all the display logic.
  */
 #include "display.h"
+#include "buffers.h"
 
 #include <stdlib.h>  /* exit */ 
 #include <curses.h>
 
 /* The ncurses window we will be displaying to. */
 static WINDOW *main_window;
+
+/* The structures we display are stored in cHat.c */
+extern line_buffer curr_line;
+extern line_buffer_list *line_list;
 
 /* initalize_display:
  * This will setup the display for writing to.
@@ -32,6 +37,10 @@ void initialize_display(void) {
  */
 void display(void) {
     clear();
+
+    /* draw the screen here. */
+
+    write_xy(0,LINES-1,curr_line.text,1); /* current typing drawn last. */
     return;
 }
 
