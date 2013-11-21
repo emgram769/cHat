@@ -14,7 +14,7 @@ void write_xy(int x, int y, char* msg, int update);
 
 void draw_xy(int x, int y, char c, int update);
 
-void quit_dialogue(void);
+int quit_dialogue(void);
 
 void popup_dialogue(char *msg);
 

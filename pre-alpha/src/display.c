@@ -77,8 +77,9 @@ void draw_xy(int x, int y, char c, int update){
 
 /* quit_dialogue:
  * Prompts the user to quit the program.
+ * returns 1 if user quits
  */
-void quit_dialogue(void) {
+int quit_dialogue(void) {
     clear();
     int height, width;
     height = 6;
@@ -99,11 +100,11 @@ void quit_dialogue(void) {
     getch(); /* weird that I need this here */
     int c = getch();
     if(c=='q'||c=='Q'){
-        cleanup_display();
-        exit(0);
+        return 1;
     } else {
         delwin(quit_window);
         display();
+        return 0;
     }
 
 }
