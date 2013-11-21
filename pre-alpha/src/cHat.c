@@ -42,6 +42,13 @@ void print_usage(void) {
     return;
 }
 
+/* send_input:
+ * Sends the current line buffer
+ */
+void send_input(void){
+    return;
+}
+
 /* process_input:
  * Processes the keyboard input and displays it. */
 void process_input(char c) {
@@ -71,6 +78,27 @@ void process_input(char c) {
     display();
     return;
 };
+
+/* delete_char:
+ * Deletes the most recent character typed (called on backspace)
+ */
+void delete_char(void) {
+    if (curr_line.length == 0)
+        return;
+
+    curr_line.text[curr_line.length-1] = 0;
+    curr_line.length--;
+
+    /* maybe we should shrink the line! */
+    if (curr_line.length < curr_line.max_length/4) {
+        char *new_text = calloc(curr_line.max_length/4, sizeof(char));
+        memcpy(new_text, curr_line.text, curr_line.length);
+        free(curr_line.text);
+        curr_line.text = new_text;
+    }
+    display();
+    return;
+}
 
 /* main:
  * The main function parses command line arguments and creates new threads to
@@ -125,8 +153,10 @@ int main(int argc, char *argv[]) {
         int c = getch();  /* refresh, accept single keystroke of input. */
         if (c == 13){
             /* enter key */
+            send_input();
         } else if (c == 127){
             /* backspace */
+            delete_char();
         } else if (c == 27){
             /* esc key */
             if(quit_dialogue())
