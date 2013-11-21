@@ -4,15 +4,13 @@
 #ifndef _CHAT_DISPLAY_H_
 #define _CHAT_DISPLAY_H_
 
+#include <curses.h> /* weird WINDOW type bullshit. */
+
 void initialize_display(void);
 
 void display(void);
 
 void clear_display(void);
-
-void write_xy(int x, int y, char* msg, int update);
-
-void draw_xy(int x, int y, char c, int update);
 
 int quit_dialogue(void);
 

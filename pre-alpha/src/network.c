@@ -85,12 +85,14 @@ void wait_for_connection(struct sockaddr_in clientaddr, struct sockaddr_in forwa
             error_handler("connection read error");
         
         clear_display();
-        write_xy(0,0,buf,1);
         
-        if (!parse_buf(buf))
-        if ((n = write(forwardfd, buf, BUFSIZE)) < 0) /* write buf into forwarded peer. */
-            error_handler_display("forward write error");
-
+        if (!parse_buf(buf)) {
+            if ((n = write(forwardfd, buf, BUFSIZE)) < 0) /* write buf into forwarded peer. */
+                error_handler_display("forward write error");
+        } else {
+            
+        }
+        
         /* wrap up connection. */
         close(forwardfd);
         close(connfd);

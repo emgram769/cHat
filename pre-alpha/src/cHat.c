@@ -34,8 +34,7 @@ void delete_char(void);
  */
 int main(int argc, char *argv[]) {
 
-    /* initialization */
-    
+    /* initialization */    
     initialize_buffers();
 
     struct network_data *settings = malloc(sizeof(struct network_data));
@@ -60,7 +59,7 @@ int main(int argc, char *argv[]) {
                 initialize_video();
                 break;
             default:
-                printf("You done goofed\n");
+                printf("\n");
                 break;
         }
     }

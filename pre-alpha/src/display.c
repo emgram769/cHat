@@ -1,14 +1,17 @@
 /* display.c
  * The file containing all the display logic.
  */
-#include "display.h"
-#include "buffers.h"
 
 #include <stdlib.h>  /* exit */ 
 #include <curses.h>
 
+#include "buffers.h"
+#include "display.h"
+
 /* The ncurses window we will be displaying to. */
 static WINDOW *main_window;
+static WINDOW *chat_window;
+static WINDOW *input_window;
 
 /* The structures we display are stored in cHat.c */
 extern line_buffer curr_line;
@@ -29,6 +32,9 @@ void initialize_display(void) {
     (void) cbreak();  /* don't wait for line break. */
     (void) noecho();  /* don't print getch to stdout. */
 
+    (void) chat_window;
+    input_window = subwin(main_window, 2, COLS, LINES-2, 0);
+
     return;
 }
 
@@ -40,7 +46,15 @@ void display(void) {
 
     /* draw the screen here. */
 
-    write_xy(0,LINES-1,curr_line.text,1); /* current typing drawn last. */
+
+    /* print char count, useful for debugging. */
+    char *len = calloc(10,sizeof(char));
+    sprintf(len, "%d", curr_line.length);
+    write_xy(input_window, COLS-3, 1, len,1);
+    free(len);
+
+    write_xy(input_window, 0, 0, curr_line.text,0); /* current typing drawn last. */
+    
     return;
 }
 
@@ -56,11 +70,11 @@ void clear_display(void) {
  * writes a msg to the window passed in at point (x,y)
  * if the last parameter is 1, do a screen update on call.
  */
-void write_xy(int x, int y, char *msg, int update){
-    mvwprintw(main_window, y, x, msg);
+void write_xy(WINDOW* window, int x, int y, char *msg, int update){
+    mvwprintw(window, y, x, msg);
 
-    touchwin(main_window);
-    wnoutrefresh(main_window);
+    touchwin(window);
+    wnoutrefresh(window);
     
     if(update)
         doupdate();
@@ -72,13 +86,12 @@ void write_xy(int x, int y, char *msg, int update){
  * range is (0,0) -> (COLS-1,LINES-1).
  * if the last parameter is 1, do a screen update on call.
  */
-void draw_xy(int x, int y, char c, int update){
-    
+void draw_xy(WINDOW* window, int x, int y, char c, int update){
     move(y,x);
     addch(c);
     
-    touchwin(main_window);
-    wnoutrefresh(main_window);
+    touchwin(window);
+    wnoutrefresh(window);
     
     if(update)
         doupdate();
