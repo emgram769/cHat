@@ -36,9 +36,15 @@ void initialize_display(void) {
     (void) cbreak();  /* don't wait for line break. */
     (void) noecho();  /* don't print getch to stdout. */
 
-    chat_window = subwin(main_window, LINES-10, COLS, 0, 0);
+    chat_window = subwin(main_window, LINES-5, COLS, 0, 0);
     //chat_window = subwin(main_window, 10, COLS, 0, 0);
     input_window = subwin(main_window, 2, COLS, LINES-2, 0);
+    
+    start_color();
+
+    init_pair(1,COLOR_WHITE, COLOR_BLUE);
+    
+    wbkgd(input_window, COLOR_PAIR(1));
 
     return;
 }
@@ -51,15 +57,41 @@ void display(void) {
 
     /* draw the screen here. */
 
+    line_buffer_node *curr_node = line_list->curr;
+    int counter = 0;
 
+    (void)curr_node;
+    counter++;
+
+    if (line_list != NULL 
+        && line_list->curr != NULL
+        && line_list->curr->line.text != NULL)
+        write_xy(main_window, 10, 10, line_list->curr->line.text, 0);
+    
+/*
+    while(line_list!=NULL &&
+      curr_node!=NULL &&
+      curr_node!=line_list->tail) {
+        write_xy(chat_window, 0, LINES-10-counter, curr_node->line.text,0);
+        counter++;
+        curr_node = curr_node->prev;
+    }
+*/
     /* print char count, useful for debugging. */
     char *len = calloc(10,sizeof(char));
     sprintf(len, "%d", curr_line.length);
-    write_xy(input_window, COLS-3, 1, len,1);
+    write_xy(input_window, COLS-3, 1, len,0);
     free(len);
 
     write_xy(input_window, 0, 0, curr_line.text,0); /* current typing drawn last. */
-    
+
+   
+    wnoutrefresh(main_window);
+    wnoutrefresh(chat_window);
+    wnoutrefresh(input_window);
+
+    doupdate();
+
     return;
 }
 

@@ -16,6 +16,9 @@
 extern line_buffer curr_line;
 extern line_buffer_list line_list; 
 
+/* local globals */
+struct network_data *network;
+
 /* parse_buf:
  * returns 1 if the message of the passed in
  * buffer should be forwarded.
@@ -40,9 +43,53 @@ int parse_buf(char *buf) {
  * sends the message. Returns 0 on success
  * -1 on failure.
  */
-int send_msg(char *msg) {
-    (void)msg;
+int send_msg(char *msg, unsigned int msg_len) {
+    socklen_t sendlen;
+    int n, sendfd;
+    struct sockaddr_in sendaddr;
+
+    sendaddr.sin_family = AF_INET; /* protocol */
+    sendaddr.sin_port = htons(network->port);
+    sendaddr.sin_addr.s_addr = inet_addr(network->ip_address);
+    sendlen = sizeof(sendaddr);
+
+    /* now to open the forwarder. */
+    if ((sendfd = socket(AF_INET, SOCK_STREAM, 0))<0)
+        error_handler("send socket error");
+
+    if (connect(sendfd,
+            (struct sockaddr *) &sendaddr, sendlen) < 0)
+        error_handler_display("send connect error");
+   
+    if ((n = write(sendfd, msg, msg_len)) < 0) /* write buf into forwarded peer. */
+        error_handler_display("send write error");
+    
     return 0;
+}
+
+/* display_msg:
+ * takes a message on the buffer and pushes it to the message list
+ * then calls display to show the list
+ */
+void display_msg(char *buf) {
+    /* naively get the length of the string */
+    unsigned int length;
+    length = (unsigned)strlen(buf);
+    line_buffer line;
+    
+    char *text = calloc(length+1,sizeof(char)); /* null terminated. */
+
+    memcpy(text, buf, length);
+
+    line.length = length;
+    line.max_length = length;
+    line.text = text;
+
+    push_to_line_list(line);
+
+    display();
+
+    return;
 }
 
 /* push_to_line_list:
@@ -113,7 +160,7 @@ void wait_for_connection(struct sockaddr_in clientaddr, struct sockaddr_in forwa
             if ((n = write(forwardfd, buf, BUFSIZE)) < 0) /* write buf into forwarded peer. */
                 error_handler_display("forward write error");
         } else {
-            
+            display_msg(buf);        
         }
         
         /* wrap up connection. */
@@ -129,6 +176,7 @@ void wait_for_connection(struct sockaddr_in clientaddr, struct sockaddr_in forwa
  * thread.
  */
 void initialize_network(void *network_settings) {
+    network = ((struct network_data *)network_settings);
     int port = ((struct network_data *)network_settings)->port;
     char *ip_address = ((struct network_data *)network_settings)->ip_address;
     if (!ip_address)

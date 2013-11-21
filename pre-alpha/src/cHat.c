@@ -147,7 +147,7 @@ void send_input(void){
     if (curr_line.length == 0) /* null input, can't mess with it */
         return;
 
-    //send_msg(curr_line.text); 
+    send_msg(curr_line.text,curr_line.length); 
     push_to_line_list(curr_line);
 
     free(curr_line.text);
