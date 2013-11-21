@@ -12,8 +12,10 @@
 #include "display.h"
 #include "network.h"
 #include "buffers.h"
+#include "util.h"
 
-#define DEFAULT_PORT 1337
+#define DEFAULT_PORT    1337
+#define BUF_MAX         1024
 
 line_buffer curr_line;
 line_buffer_list *line_list;
@@ -23,7 +25,92 @@ void send_input(void);
 void process_input(char c);
 void initialize_buffers(void);
 void initialize_video(void);
+void print_usage(void);
+void delete_char(void);
 
+/* main:
+ * The main function parses command line arguments and creates new threads to
+ * run all the necessary routines.
+ */
+int main(int argc, char *argv[]) {
+
+    /* initialization */
+    
+    initialize_buffers();
+
+    struct network_data *settings = malloc(sizeof(struct network_data));
+    char opt;
+
+    /* Default port. */
+    settings->port = DEFAULT_PORT;
+    settings->ip_address = NULL;
+
+    while(-1 != (opt = getopt(argc, argv, "hvp:i:"))){
+        switch(opt){
+            case 'h':
+                print_usage();
+                return 0;
+            case 'p':
+                settings->port = atoi(optarg);
+                break;
+            case 'i':
+                settings->ip_address = optarg;
+                break;
+            case 'v':
+                initialize_video();
+                break;
+            default:
+                printf("You done goofed\n");
+                break;
+        }
+    }
+
+    /* if they didn't specify a peer, ask for it. */
+    if (settings->ip_address == NULL) {
+        /* max 20 char ip address. */
+        char *ip = calloc(20,sizeof(char));
+        
+        /* prompt user and get their input. */
+        printf("Please enter a peer IP address: ");
+        fgets(ip, sizeof(ip), stdin);
+
+        /* set the settings with that input */
+        settings->ip_address=ip; 
+    }
+    
+    /* spawn network thread. */
+    pthread_t network_thread;
+
+    if((pthread_create(&network_thread, NULL,
+        (void *)initialize_network, (void *)settings))==-1)
+        error_handler("error initializing network thread.\n");
+    
+    if((pthread_detach(network_thread))==-1) /* let it clean itself up. */
+        error_handler("error detatching thread.\n");
+
+    initialize_display();
+
+    while(1){ /* ...and 100% CPU usage */
+        int c = getch();  /* refresh, accept single keystroke of input. */
+        if (c == 13){
+            /* enter key */
+            send_input();
+        } else if (c == 127){
+            /* backspace */
+            delete_char();
+        } else if (c == 27){
+            /* esc key */
+            if(quit_dialogue())
+                break;
+        } else if (c > 0) {
+            /* any other key */
+            process_input(c);
+        }
+    }
+    
+    cleanup_display();
+    return 0;
+}
 
 /* initialize_buffers:
  * Initializes the text buffers used by the client.
@@ -126,74 +213,4 @@ void delete_char(void) {
     return;
 }
 
-/* main:
- * The main function parses command line arguments and creates new threads to
- * run all the necessary routines.
- */
-int main(int argc, char *argv[]) {
-
-    /* initialization */
-    
-    initialize_buffers();
-
-    struct network_data *settings = malloc(sizeof(struct network_data));
-    char opt;
-
-    /* Default port. */
-    settings->port = DEFAULT_PORT;
-    settings->ip_address = NULL;
-
-    while(-1 != (opt = getopt(argc, argv, "hvp:i:"))){
-        switch(opt){
-            case 'h':
-                print_usage();
-                return 0;
-            case 'p':
-                settings->port = atoi(optarg);
-                break;
-            case 'i':
-                settings->ip_address = optarg;
-                break;
-            case 'v':
-                initialize_video();
-                break;
-            default:
-                printf("You done goofed\n");
-                break;
-        }
-    }
- 
-    /* spawn network thread. */
-    pthread_t network_thread;
-
-    if((pthread_create(&network_thread, NULL,
-        (void *)initialize_network, (void *)settings))==-1)
-        printf("error initializing network thread.\n");
-    
-    if((pthread_detach(network_thread))==-1) /* let it clean itself up. */
-        printf("error detatching thread.\n");
-
-    initialize_display();
-
-    while(1){ /* ...and 100% CPU usage */
-        int c = getch();  /* refresh, accept single keystroke of input. */
-        if (c == 13){
-            /* enter key */
-            send_input();
-        } else if (c == 127){
-            /* backspace */
-            delete_char();
-        } else if (c == 27){
-            /* esc key */
-            if(quit_dialogue())
-                break;
-        } else if (c > 0) {
-            /* any other key */
-            process_input(c);
-        }
-    }
-    
-    cleanup_display();
-    return 0;
-}
 
