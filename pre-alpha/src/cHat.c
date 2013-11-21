@@ -18,6 +18,13 @@
 line_buffer curr_line;
 line_buffer_list *line_list;
 
+/* private functions */
+void send_input(void);
+void process_input(char c);
+void initialize_buffers(void);
+void initialize_video(void);
+
+
 /* initialize_buffers:
  * Initializes the text buffers used by the client.
  */
@@ -46,6 +53,19 @@ void print_usage(void) {
  * Sends the current line buffer
  */
 void send_input(void){
+    if (curr_line.length == 0) /* null input, can't mess with it */
+        return;
+
+    (void) send_msg(curr_line.text); 
+
+    free(curr_line.text);
+    curr_line.length = 0;
+    curr_line.max_length = 0;
+
+    process_input('\0'); /* hacky? resets the string */
+
+    /* refresh display. */ 
+    display();
     return;
 }
 
@@ -58,6 +78,9 @@ void process_input(char c) {
         curr_line.max_length = 8;
     }
     
+    if (c == '\0') /* this doesn't add to the string. */
+        return;
+
     unsigned int length = curr_line.length;
     unsigned int max_length = curr_line.max_length;
 
@@ -75,6 +98,8 @@ void process_input(char c) {
     }
 
     curr_line.length++;
+
+    /* refresh window. */
     display();
     return;
 };
@@ -86,8 +111,7 @@ void delete_char(void) {
     if (curr_line.length == 0)
         return;
 
-    curr_line.text[curr_line.length-1] = 0;
-    curr_line.length--;
+    curr_line.text[--curr_line.length] = 0; /* deletion process. */
 
     /* maybe we should shrink the line! */
     if (curr_line.length < curr_line.max_length/4) {
@@ -96,6 +120,8 @@ void delete_char(void) {
         free(curr_line.text);
         curr_line.text = new_text;
     }
+
+    /* refresh window. */
     display();
     return;
 }

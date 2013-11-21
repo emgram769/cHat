@@ -18,8 +18,9 @@
  * returns 1 if the message of the passed in
  * buffer should be forwarded.
  * 0 if it should not.
+ * It really should do other stuff in the future.
+ * Fuck parsing in C. 
  */
-
 int parse_buf(char *buf) {
     if (buf == NULL)
         return -1;
@@ -32,6 +33,15 @@ int parse_buf(char *buf) {
     return 1;
 }
 
+/* send_msg:
+ * simply opens a connection and
+ * sends the message. Returns 0 on success
+ * -1 on failure.
+ */
+int send_msg(char *msg) {
+    (void)msg;
+    return 0;
+}
 
 /* wait_for_connnection:
  * called by the initializer, this is the main function that is used
@@ -47,7 +57,7 @@ void wait_for_connection(struct sockaddr_in clientaddr, struct sockaddr_in forwa
 
     int connfd, forwardfd; /* initialize file descriptors */
         
-    while(1){
+    while(1) {
         int n;
         /* we got a connection! */
         if ((connfd = accept(listenfd,

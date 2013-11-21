@@ -25,4 +25,6 @@ struct peers {
 
 void initialize_network(void *network_settings);
 
+int send_msg(char *msg);
+
 #endif /* _CHAT_NETWORK_H_ */
