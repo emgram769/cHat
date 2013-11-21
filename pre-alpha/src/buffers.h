@@ -19,7 +19,7 @@ typedef struct _line_buffer_node {
 
 typedef struct _line_buffer_list {
     line_buffer_node *head;
-    line_buffer_node *curr;
+    line_buffer_node *curr; /* for display purposes */
     line_buffer_node *tail;
 } line_buffer_list;
 

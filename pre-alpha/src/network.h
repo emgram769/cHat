@@ -6,6 +6,8 @@
 
 #define MAXUSERS    128
 
+#include "buffers.h"
+
 struct network_data {
     int port;
     char *ip_address;
@@ -26,5 +28,7 @@ struct peers {
 void initialize_network(void *network_settings);
 
 int send_msg(char *msg);
+
+void push_to_line_list(line_buffer line);
 
 #endif /* _CHAT_NETWORK_H_ */

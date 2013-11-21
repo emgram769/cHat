@@ -18,7 +18,7 @@
 #define BUF_MAX         1024
 
 line_buffer curr_line;
-line_buffer_list *line_list;
+line_buffer_list line_list;
 
 /* private functions */
 void send_input(void);
@@ -115,9 +115,14 @@ int main(int argc, char *argv[]) {
  * Initializes the text buffers used by the client.
  */
 void initialize_buffers(void) {
+    //curr_line = calloc(1,sizeof(line_buffer));
     curr_line.text = NULL;
     curr_line.length = 0;
     curr_line.max_length = 0;
+
+    line_list.head = NULL;
+    line_list.curr = NULL;
+    line_list.tail = NULL;
 }
 
 /* initialize_video:
@@ -142,13 +147,15 @@ void send_input(void){
     if (curr_line.length == 0) /* null input, can't mess with it */
         return;
 
-    (void) send_msg(curr_line.text); 
+    //send_msg(curr_line.text); 
+    push_to_line_list(curr_line);
 
     free(curr_line.text);
+    curr_line.text = calloc(8,sizeof(char));
     curr_line.length = 0;
-    curr_line.max_length = 0;
-
-    process_input('\0'); /* hacky? resets the string */
+    curr_line.max_length = 8;
+ 
+    //process_input('\0'); /* hacky? resets the string */
 
     /* refresh display. */ 
     display();

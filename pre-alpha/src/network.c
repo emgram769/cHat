@@ -13,6 +13,8 @@
 
 #define BUFSIZE 1024
 
+extern line_buffer curr_line;
+extern line_buffer_list line_list; 
 
 /* parse_buf:
  * returns 1 if the message of the passed in
@@ -41,6 +43,27 @@ int parse_buf(char *buf) {
 int send_msg(char *msg) {
     (void)msg;
     return 0;
+}
+
+/* push_to_line_list:
+ * takes a line buffer and copies the contents into a line node
+ * then adds that node to the line list
+ */
+void push_to_line_list(line_buffer line) {
+    /* create the node */
+    line_buffer_node *new_node = calloc(1, sizeof(line_buffer_node));
+    new_node->line.text = calloc(line.length,sizeof(char)); /* can't change */
+    new_node->line.length = line.length;
+    new_node->line.max_length = line.max_length;
+    /* front of the list */
+    new_node->prev = line_list.head;
+  
+    /* add the node to the list */
+    if (line_list.tail == NULL)
+        line_list.tail = new_node;
+
+    line_list.head = new_node;
+    line_list.curr = new_node; /* curr is default most recent */
 }
 
 /* wait_for_connnection:

@@ -17,6 +17,10 @@ static WINDOW *input_window;
 extern line_buffer curr_line;
 extern line_buffer_list *line_list;
 
+/* local functions. */
+void write_xy(WINDOW* window, int x, int y, char* msg, int update);
+void draw_xy(WINDOW* window, int x, int y, char c, int update);
+
 /* initalize_display:
  * This will setup the display for writing to.
  */
@@ -32,7 +36,8 @@ void initialize_display(void) {
     (void) cbreak();  /* don't wait for line break. */
     (void) noecho();  /* don't print getch to stdout. */
 
-    (void) chat_window;
+    chat_window = subwin(main_window, LINES-10, COLS, 0, 0);
+    //chat_window = subwin(main_window, 10, COLS, 0, 0);
     input_window = subwin(main_window, 2, COLS, LINES-2, 0);
 
     return;
