@@ -57,13 +57,14 @@ int send_msg(char *msg, unsigned int msg_len) {
     if ((sendfd = socket(AF_INET, SOCK_STREAM, 0))<0)
         error_handler("send socket error");
 
-    if (connect(sendfd,
-            (struct sockaddr *) &sendaddr, sendlen) < 0)
+    if (connect(sendfd, (struct sockaddr *) &sendaddr, sendlen) < 0)
         error_handler_display("send connect error");
    
     if ((n = write(sendfd, msg, msg_len)) < 0) /* write buf into forwarded peer. */
         error_handler_display("send write error");
-    
+   
+    close(sendfd);
+
     return 0;
 }
 
