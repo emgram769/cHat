@@ -71,7 +71,6 @@ void display(int i) {
             counter++;
         }
         
-        wnoutrefresh(chat_window);
     }
 
     if(i==0||i==1) {
@@ -82,9 +81,10 @@ void display(int i) {
         free(len);
 
         write_xy(input_window, 0, 0, curr_line.text,0); /* current typing drawn last. */
-        wnoutrefresh(input_window);
     }
    
+    wnoutrefresh(input_window);
+    wnoutrefresh(chat_window);
     wnoutrefresh(main_window);
     doupdate();
 
