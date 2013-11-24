@@ -34,7 +34,7 @@
 #define BUFSIZE 2048
 #define BUFLEN 2048
 
-/* AUDIO */
+/* AUDIOf */
 #include <portaudio.h>
 
 /* #define SAMPLE_RATE  (17932) // Test failure to open with this value. */
