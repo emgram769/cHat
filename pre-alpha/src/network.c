@@ -86,7 +86,7 @@ void display_msg(char *buf) {
     line.max_length = length;
     line.text = text;
 
-    push_to_line_list(line);
+    push_to_line_list(&line);
 
     display();
 
@@ -97,12 +97,12 @@ void display_msg(char *buf) {
  * takes a line buffer and copies the contents into a line node
  * then adds that node to the line list
  */
-void push_to_line_list(line_buffer line) {
+void push_to_line_list(line_buffer *line) {
     /* create the node */
     line_buffer_node *new_node = calloc(1, sizeof(line_buffer_node));
-    new_node->line.text = calloc(line.length,sizeof(char)); /* can't change */
-    new_node->line.length = line.length;
-    new_node->line.max_length = line.max_length;
+    new_node->line.text = calloc(line->length,sizeof(char)); /* can't change */
+    new_node->line.length = line->length;
+    new_node->line.max_length = line->max_length;
     /* front of the list */
     new_node->prev = line_list.head;
   

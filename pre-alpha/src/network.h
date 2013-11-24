@@ -29,6 +29,6 @@ void initialize_network(void *network_settings);
 
 int send_msg(char *msg, unsigned int msg_len);
 
-void push_to_line_list(line_buffer line);
+void push_to_line_list(line_buffer *line);
 
 #endif /* _CHAT_NETWORK_H_ */

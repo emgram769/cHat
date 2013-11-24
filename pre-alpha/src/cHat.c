@@ -148,7 +148,7 @@ void send_input(void){
         return;
 
     //send_msg(curr_line.text,curr_line.length); 
-    push_to_line_list(curr_line);
+    push_to_line_list(&curr_line);
 
     free(curr_line.text);
     curr_line.text = calloc(8,sizeof(char));
