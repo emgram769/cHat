@@ -100,7 +100,8 @@ void display_msg(char *buf) {
 void push_to_line_list(line_buffer *line) {
     /* create the node */
     line_buffer_node *new_node = calloc(1, sizeof(line_buffer_node));
-    new_node->line.text = calloc(line->length,sizeof(char)); /* can't change */
+    new_node->line.text = calloc(line->length, sizeof(char)); /* can't change */
+    memcpy(new_node->line.text, line->text, line->length);
     new_node->line.length = line->length;
     new_node->line.max_length = line->max_length;
     /* front of the list */
@@ -112,6 +113,7 @@ void push_to_line_list(line_buffer *line) {
 
     line_list.head = new_node;
     line_list.curr = new_node; /* curr is default most recent */
+
 }
 
 /* wait_for_connnection:
