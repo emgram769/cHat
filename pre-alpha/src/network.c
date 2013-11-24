@@ -53,7 +53,7 @@ int send_msg(char *msg, unsigned int msg_len) {
     sendaddr.sin_addr.s_addr = inet_addr(network->ip_address);
     sendlen = sizeof(sendaddr);
 
-    /* now to open the forwarder. */
+    /* now to open the sender. */
     if ((sendfd = socket(AF_INET, SOCK_STREAM, 0))<0)
         error_handler("send socket error");
 
