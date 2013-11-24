@@ -15,7 +15,7 @@ static WINDOW *input_window;
 
 /* The structures we display are stored in cHat.c */
 extern line_buffer curr_line;
-extern line_buffer_list *line_list;
+extern line_buffer_list line_list;
 
 /* local functions. */
 void write_xy(WINDOW* window, int x, int y, char* msg, int update);
