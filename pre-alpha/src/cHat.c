@@ -158,7 +158,8 @@ void send_input(void){
     //process_input('\0'); /* hacky? resets the string */
 
     /* refresh display. */ 
-    display(0);
+    display(1);
+    display(2);
     return;
 }
 

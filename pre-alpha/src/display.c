@@ -69,11 +69,10 @@ void display(int i) {
             write_xy(chat_window, 0, LINES-10-counter, curr_node->line.text,0);
             curr_node = curr_node->prev;
             counter++;
-        }
-        
+        } 
     }
 
-    if(i==0||i==1) {
+    if(i==0 || i==1) {
         /* print char count, useful for debugging. */
         char *len = calloc(10,sizeof(char));
         sprintf(len, "%d", curr_line.length);
@@ -82,9 +81,9 @@ void display(int i) {
 
         write_xy(input_window, 0, 0, curr_line.text,0); /* current typing drawn last. */
     }
-   
-    wnoutrefresh(input_window);
+ 
     wnoutrefresh(chat_window);
+    wnoutrefresh(input_window);
     wnoutrefresh(main_window);
     doupdate();
 
