@@ -15,7 +15,7 @@ static WINDOW *input_window;
 
 /* The structures we display are stored in cHat.c */
 extern line_buffer curr_line;
-extern line_buffer_list *line_list;
+extern line_buffer_list line_list;
 
 /* local functions. */
 void write_xy(WINDOW* window, int x, int y, char* msg, int update);
@@ -57,26 +57,21 @@ void display(void) {
 
     /* draw the screen here. */
 
-    line_buffer_node *curr_node = line_list->curr;
+    line_buffer_node *curr_node = line_list.curr;
     int counter = 0;
 
     (void)curr_node;
-    counter++;
+    counter++;/*
+    if (line_list.curr != NULL) {
+        write_xy(main_window,0,0,line_list.curr->line.text,0);
+    }
+   */
 
-    if (line_list != NULL 
-        && line_list->curr != NULL
-        && line_list->curr->line.text != NULL)
-        write_xy(main_window, 10, 10, line_list->curr->line.text, 0);
-    
-/*
-    while(line_list!=NULL &&
-      curr_node!=NULL &&
-      curr_node!=line_list->tail) {
+    while(curr_node!=NULL) {
         write_xy(chat_window, 0, LINES-10-counter, curr_node->line.text,0);
         counter++;
         curr_node = curr_node->prev;
     }
-*/
     /* print char count, useful for debugging. */
     char *len = calloc(10,sizeof(char));
     sprintf(len, "%d", curr_line.length);
