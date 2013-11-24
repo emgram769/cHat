@@ -158,7 +158,7 @@ void send_input(void){
     //process_input('\0'); /* hacky? resets the string */
 
     /* refresh display. */ 
-    display();
+    display(0);
     return;
 }
 
@@ -193,7 +193,7 @@ void process_input(char c) {
     curr_line.length++;
 
     /* refresh window. */
-    display();
+    display(1);
     return;
 };
 
@@ -215,7 +215,7 @@ void delete_char(void) {
     }
 
     /* refresh window. */
-    display();
+    display(1);
     return;
 }
 

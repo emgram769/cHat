@@ -88,7 +88,7 @@ void display_msg(char *buf) {
 
     push_to_line_list(&line);
 
-    display();
+    display(2);
 
     return;
 }

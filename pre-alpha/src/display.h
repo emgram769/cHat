@@ -4,11 +4,9 @@
 #ifndef _CHAT_DISPLAY_H_
 #define _CHAT_DISPLAY_H_
 
-#include <curses.h> /* weird WINDOW type bullshit. */
-
 void initialize_display(void);
 
-void display(void);
+void display(int i); /* takes a parameter that describes update */
 
 void clear_display(void);
 

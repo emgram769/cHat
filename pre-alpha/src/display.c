@@ -51,40 +51,41 @@ void initialize_display(void) {
 
 /* display:
  * Refresh the display.
+ * parameter describes update
+ * 0 is all, 1 is input, 2 is chat lines
  */
-void display(void) {
-    clear();
+void display(int i) {
+    if(i==0)
+        clear();
 
     /* draw the screen here. */
+    
+    /* draw the chat window */
+    if(i==0 || i==2) {    
+        line_buffer_node *curr_node = line_list.curr;
+        int counter = 0;
 
-    line_buffer_node *curr_node = line_list.curr;
-    int counter = 0;
-
-    (void)curr_node;
-    counter++;/*
-    if (line_list.curr != NULL) {
-        write_xy(main_window,0,0,line_list.curr->line.text,0);
+        while(curr_node!=NULL) {
+            write_xy(chat_window, 0, LINES-10-counter, curr_node->line.text,0);
+            curr_node = curr_node->prev;
+            counter++;
+        }
+        
+        wnoutrefresh(chat_window);
     }
-   */
 
-    while(curr_node!=NULL) {
-        write_xy(chat_window, 0, LINES-10-counter, curr_node->line.text,0);
-        counter++;
-        curr_node = curr_node->prev;
+    if(i==0||i==1) {
+        /* print char count, useful for debugging. */
+        char *len = calloc(10,sizeof(char));
+        sprintf(len, "%d", curr_line.length);
+        write_xy(input_window, COLS-3, 1, len,0);
+        free(len);
+
+        write_xy(input_window, 0, 0, curr_line.text,0); /* current typing drawn last. */
+        wnoutrefresh(input_window);
     }
-    /* print char count, useful for debugging. */
-    char *len = calloc(10,sizeof(char));
-    sprintf(len, "%d", curr_line.length);
-    write_xy(input_window, COLS-3, 1, len,0);
-    free(len);
-
-    write_xy(input_window, 0, 0, curr_line.text,0); /* current typing drawn last. */
-
    
     wnoutrefresh(main_window);
-    wnoutrefresh(chat_window);
-    wnoutrefresh(input_window);
-
     doupdate();
 
     return;
@@ -157,7 +158,7 @@ int quit_dialogue(void) {
         return 1;
     } else {
         delwin(quit_window);
-        display();
+        display(0);
         return 0;
     }
 
@@ -188,10 +189,10 @@ void popup_dialogue(char *msg) {
     int c = getch();
     if(c==27){
         delwin(popup_window);
-        display();
+        display(0);
     } else {
         delwin(popup_window);
-        display();
+        display(0);
     }
 
 }
