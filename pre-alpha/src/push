@@ -1,5 +1,6 @@
 #! /bin/bash
+make clean;
+git update-index --assume-unchanged *.swp;
 git add --all;
 git commit -m "$@";
 git push origin master;
-echo "added";
