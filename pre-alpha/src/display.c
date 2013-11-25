@@ -55,13 +55,14 @@ void initialize_display(void) {
  * 0 is all, 1 is input, 2 is chat lines
  */
 void display(int i) {
-    if(i==0)
+    pthread_mutex_lock(&display_mutex);
+    if(i>=0)
         clear();
 
     /* draw the screen here. */
     
     /* draw the chat window */
-    if(i==0 || i==2) {    
+    if(i>=0 || i==2) {    
         line_buffer_node *curr_node = line_list.curr;
         int counter = 0;
 
@@ -86,6 +87,8 @@ void display(int i) {
     wnoutrefresh(input_window);
     wnoutrefresh(main_window);
     doupdate();
+
+    pthread_mutex_unlock(&display_mutex);
 
     return;
 }

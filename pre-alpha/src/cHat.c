@@ -37,6 +37,8 @@ int main(int argc, char *argv[]) {
     /* initialization */    
     initialize_buffers();
 
+    
+
     struct network_data *settings = malloc(sizeof(struct network_data));
     char opt;
 
@@ -76,7 +78,9 @@ int main(int argc, char *argv[]) {
         /* set the settings with that input */
         settings->ip_address=ip; 
     }
-    
+    /* initializes lock for display. */
+    pthread_mutex_init(&display_mutex, NULL);
+
     /* spawn network thread. */
     pthread_t network_thread;
 
@@ -155,11 +159,10 @@ void send_input(void){
     curr_line.length = 0;
     curr_line.max_length = 8;
  
-    //process_input('\0'); /* hacky? resets the string */
 
-    /* refresh display. */ 
-    display(1);
-    display(2);
+    /* refresh display.  */
+    display(0);
+    
     return;
 }
 
