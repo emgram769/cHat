@@ -35,9 +35,7 @@ void delete_char(void);
 int main(int argc, char *argv[]) {
 
     /* initialization */    
-    initialize_buffers();
-
-    
+    initialize_buffers();    
 
     struct network_data *settings = malloc(sizeof(struct network_data));
     char opt;
